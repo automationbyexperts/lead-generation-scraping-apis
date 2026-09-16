@@ -70,6 +70,22 @@ def category_actors() -> list[dict]:
     return items, page['total']
 
 
+def regional_actors() -> list[dict]:
+    """Local sources (a Brazilian company registry, a Spanish job board) rarely reach the category's
+    top by popularity, so a translated catalog searches for them by name. Store search is loose and
+    matches descriptions, so a hit only counts when its title or slug names a keyword of the target group."""
+    found = []
+    for extra in CONFIG.get('extraSearches', []):
+        group = next(g for g in CONFIG['groups'] if g['slug'] == extra['group'])
+        for term in extra['terms']:
+            for raw in store_page({'search': term, 'limit': 100})['items']:
+                head = f'{raw.get("title") or ""} {raw["name"].replace("-", " ")}'.lower()
+                if any(re.search(rf'\b{re.escape(k)}', head) for k in group['keywords']):
+                    found.append(raw)
+        print(f'  regional search for {extra["group"]}: {len(found)} hits so far')
+    return found
+
+
 def maintainer_actors() -> dict[str, dict]:
     page = store_page({'username': MAINTAINER, 'limit': 100})
     return {a['name']: a for a in page['items']}
@@ -99,10 +115,6 @@ def short(text: str, limit: int = 150) -> str:
 
 def cell(text: str) -> str:
     return text.replace('|', '\\|').replace('[', '(').replace(']', ')')
-
-
-def number(n: int) -> str:
-    return f'{n:,}'
 
 
 def anchor(title: str) -> str:
@@ -145,6 +157,73 @@ def assign_group(actor: dict) -> str:
     return CONFIG['fallbackGroup']['slug']
 
 
+# Every sentence a reader sees. config.json "ui" overrides any key, which is how the translated
+# catalogs reuse this exact file. Placeholders are filled with str.format.
+UI_EN = {
+    'statsLine': '**{count} actors in use** | **{storeTotal} screened** | **{topics} topics** | Updated {today}',
+    'startFree': 'Start free on Apify',
+    'llmsLink': 'llms.txt for AI assistants',
+    'customLink': 'Custom scrapers',
+    'languages': 'Languages',
+    'whatIs': 'What is this?',
+    'howItWorks': 'Every entry is a hosted cloud tool (an "Actor") on the Apify platform: open it, fill in the input, '
+                  'click Start, and export the results as JSON, CSV or Excel, or call it from code through the Apify '
+                  'API. Apify gives every new account free monthly credit, enough to try most of these actors '
+                  'without paying.',
+    'descriptionNote': '',
+    'contents': 'Contents',
+    'topTitle': 'Top {n} most used',
+    'topIntro': 'Ranked by how many different people ran them in the last 30 days.',
+    'colActor': 'Actor', 'colWhat': 'What it does', 'colUsers': 'Monthly users', 'colRating': 'Rating',
+    'by': 'by',
+    'seeAll': 'See all {n} {title} actors',
+    'ownTitle': 'Maintained by us',
+    'ownIntro': 'Actors built and maintained by [{brand}]({site}), the team behind this list. Bugs reported '
+                'through the Apify issue tab are usually fixed within days.',
+    'chooseTitle': 'How to choose an actor',
+    'choose': [
+        '**Monthly users** is the best single signal: it counts distinct people who ran the actor in the last 30 '
+        'days, so abandoned tools sink to the bottom.',
+        '**Rating** comes from Apify Store reviews. A 4.5+ rating with dozens of reviews means the output is reliable.',
+        '**Pricing model** differs per actor (pay per result, pay per event, or a monthly rental). The live price '
+        'is always shown on the actor page, so compare there before a big run.',
+        '**Run a small test first.** Limit the input to 10 or 20 results, check the fields you need, then scale up.',
+    ],
+    'runTitle': 'How to run one',
+    'run': [
+        '[Create a free Apify account]({signup}) (no card needed).',
+        'Open any actor above and click **Try for free**.',
+        'Fill in the input form (search terms, URLs or filters) and click **Start**.',
+        'Download the results from the **Output** tab, or schedule the actor and send results to Google Sheets, '
+        'Zapier, Make, n8n or a webhook.',
+    ],
+    'fromCode': 'From code, every actor has the same API:',
+    'faqTitle': 'FAQ',
+    'faqUpdatedQ': 'How often is this list updated?',
+    'faqUpdatedA': 'A GitHub Action rebuilds it every week from the public Apify Store API, so new actors appear '
+                   'and dead ones drop off automatically.',
+    'faqAddQ': 'Can I add my actor?',
+    'faqAddA': 'Publish it in the Apify Store under the {category} category. Once people start running it, it '
+               'enters the list on the next weekly build. No pull request needed.',
+    'customTitle': 'Need a custom scraper?',
+    'customText': 'If no actor here fits your source, [{brand}]({site}) builds and maintains custom Apify '
+                  'scrapers. Email {email} with the site and the fields you need.',
+    'footer': 'If this list saved you time, a star helps other people find it. Links to Apify carry a referral '
+              'code that supports the upkeep of this list at no extra cost to you.',
+    'groupPageTitle': '{title}: {n} Apify actors',
+    'groupPageIntro': 'Part of [{catalog}](../README.md). Sorted by monthly users. Updated {today}.',
+    'groupPageCta': '[Create a free Apify account]({signup}) to run any of these.',
+    'llmsIntro': 'Updated {today}. Monthly users = distinct users in the last 30 days. Links include a referral code.',
+    'llmsUsers': '{n} monthly users',
+}
+UI = {**UI_EN, **CONFIG.get('ui', {})}
+THOUSANDS = CONFIG.get('thousandsSeparator', ',')
+
+
+def number(n: int) -> str:
+    return f'{n:,}'.replace(',', THOUSANDS)
+
+
 def rating_text(actor: dict) -> str:
     if not actor['rating'] or actor['reviews'] < 1:
         return '-'
@@ -152,14 +231,15 @@ def rating_text(actor: dict) -> str:
 
 
 def table(actors: list[dict], rank: bool = False) -> list[str]:
-    head = '| # | Actor | What it does | Monthly users | Rating |' if rank else \
-        '| Actor | What it does | Monthly users | Rating |'
+    cols = f'{UI["colActor"]} | {UI["colWhat"]} | {UI["colUsers"]} | {UI["colRating"]} |'
+    head = f'| # | {cols}' if rank else f'| {cols}'
     sep = '|---|---|---|---:|---|' if rank else '|---|---|---:|---|'
     rows = [head, sep]
     for i, a in enumerate(actors, 1):
         title = cell(a['title'])
         desc = cell(short(a['description']))
-        line = f'| [{title}]({a["url"]}) <br><sub>by {cell(a["developer"])}</sub> | {desc} | {number(a["monthlyUsers"])} | {rating_text(a)} |'
+        line = (f'| [{title}]({a["url"]}) <br><sub>{UI["by"]} {cell(a["developer"])}</sub> | {desc} | '
+                f'{number(a["monthlyUsers"])} | {rating_text(a)} |')
         rows.append(f'| {i} {line}' if rank else line)
     return rows
 
@@ -171,148 +251,103 @@ def render(actors, groups, featured, store_total, today) -> dict[str, str]:
     files: dict[str, str] = {}
     top = sorted(actors, key=lambda a: -a['monthlyUsers'])[:c['topCount']]
     site = f'{SITE}/apify?{UTM}'
+    signup = f'https://apify.com/?{REFERRAL}'
+    top_title = UI['topTitle'].format(n=c['topCount'])
 
     out = [
         f'# {c["title"]}',
         '',
         f'> {c["tagline"]}',
         '',
-        f'**{number(len(actors))} actors in use** | **{number(store_total)} screened** | '
-        f'**{len(groups)} topics** | Updated {today}',
+        UI['statsLine'].format(count=number(len(actors)), storeTotal=number(store_total), topics=len(groups),
+                               today=today),
         '',
-        f'[Start free on Apify](https://apify.com/?{REFERRAL}) | [llms.txt for AI assistants](llms.txt) | '
-        f'[JSON](data/actors.json) | [CSV](data/actors.csv) | [Custom scrapers]({site})',
+        f'[{UI["startFree"]}]({signup}) | [{UI["llmsLink"]}](llms.txt) | '
+        f'[JSON](data/actors.json) | [CSV](data/actors.csv) | [{UI["customLink"]}]({site})',
         '',
-        '## What is this?',
+    ]
+    if c.get('languages'):
+        langs = ' | '.join(f'**{l["label"]}**' if l['repo'] == REPO else
+                           f'[{l["label"]}](https://github.com/{OWNER}/{l["repo"]})' for l in c['languages'])
+        out += [f'{UI["languages"]}: {langs}', '']
+    out += [
+        f'## {UI["whatIs"]}',
         '',
         c['intro'].format(count=number(len(actors)), storeTotal=number(store_total)),
         '',
-        'Every entry is a hosted cloud tool (an "Actor") on the Apify platform: open it, fill in the input, click '
-        'Start, and export the results as JSON, CSV or Excel, or call it from code through the Apify API. '
-        'Apify gives every new account free monthly credit, enough to try most of these actors without paying.',
+        UI['howItWorks'],
         '',
-        '## Contents',
-        '',
-        f'- [Top {c["topCount"]} most used](#top-{c["topCount"]}-most-used)',
     ]
+    if UI['descriptionNote']:
+        out += [UI['descriptionNote'], '']
+    out += [f'## {UI["contents"]}', '', f'- [{top_title}]({anchor(top_title)})']
     for g in groups:
         out.append(f'- [{g["title"]}]({anchor(g["title"])}) ({len(g["actors"])})')
-    out += [
-        '- [Maintained by us](#maintained-by-us)',
-        '- [How to choose an actor](#how-to-choose-an-actor)',
-        '- [How to run one](#how-to-run-one)',
-        '- [FAQ](#faq)',
-        '',
-        f'## Top {c["topCount"]} most used',
-        '',
-        f'Ranked by how many different people ran them in the last 30 days.',
-        '',
-        *table(top, rank=True),
-        '',
-    ]
+    for key in ('ownTitle', 'chooseTitle', 'runTitle', 'faqTitle', 'customTitle'):
+        if key != 'ownTitle' or featured:
+            out.append(f'- [{UI[key]}]({anchor(UI[key])})')
+    out += ['', f'## {top_title}', '', UI['topIntro'], '', *table(top, rank=True), '']
     for g in groups:
         out += [f'## {g["title"]}', '', g['blurb'], '']
         out += table(g['actors'][:README_ROWS])
         if len(g['actors']) > README_ROWS:
-            out += ['', f'[See all {len(g["actors"])} {g["title"]} actors](groups/{g["slug"]}.md)']
+            out += ['', f'[{UI["seeAll"].format(n=len(g["actors"]), title=g["title"])}](groups/{g["slug"]}.md)']
         out.append('')
     if featured:
-        out += [
-            '## Maintained by us',
-            '',
-            f'Actors built and maintained by [{c["brand"]}]({site}), the team behind this list. '
-            'Bugs reported through the Apify issue tab are usually fixed within days.',
-            '',
-            *table(featured),
-            '',
-        ]
+        out += [f'## {UI["ownTitle"]}', '', UI['ownIntro'].format(brand=c['brand'], site=site), '',
+                *table(featured), '']
+    out += [f'## {UI["chooseTitle"]}', '', *[f'- {line}' for line in UI['choose']], '']
+    out += [f'## {UI["runTitle"]}', '']
+    out += [f'{i}. {line.format(signup=signup)}' for i, line in enumerate(UI['run'], 1)]
     out += [
-        '## How to choose an actor',
         '',
-        '- **Monthly users** is the best single signal: it counts distinct people who ran the actor in the last '
-        '30 days, so abandoned tools sink to the bottom.',
-        '- **Rating** comes from Apify Store reviews. A 4.5+ rating with dozens of reviews means the '
-        'output is reliable.',
-        '- **Pricing model** differs per actor (pay per result, pay per event, or a monthly rental). The live '
-        'price is always shown on the actor page, so compare there before a big run.',
-        '- **Run a small test first.** Limit the input to 10 or 20 results, check the fields you need, then scale up.',
-        '',
-        '## How to run one',
-        '',
-        f'1. [Create a free Apify account](https://apify.com/?{REFERRAL}) (no card needed).',
-        '2. Open any actor above and click **Try for free**.',
-        '3. Fill in the input form (search terms, URLs or filters) and click **Start**.',
-        '4. Download the results from the **Output** tab, or schedule the actor and send results to Google Sheets, '
-        'Zapier, Make, n8n or a webhook.',
-        '',
-        'From code, every actor has the same API:',
+        UI['fromCode'],
         '',
         '```python',
         'from apify_client import ApifyClient',
         '',
         'client = ApifyClient("<YOUR_APIFY_TOKEN>")',
-        f'run = client.actor("{c["exampleActor"]}").call(run_input={json.dumps(c["exampleInput"])})',
+        f'run = client.actor("{c["exampleActor"]}").call(run_input={json.dumps(c["exampleInput"], ensure_ascii=False)})',
         'for item in client.dataset(run["defaultDatasetId"]).iterate_items():',
         '    print(item)',
         '```',
         '',
-        '## FAQ',
+        f'## {UI["faqTitle"]}',
         '',
     ]
     for q, a in c['faq']:
         out += [f'### {q}', '', a, '']
     out += [
-        '### How often is this list updated?',
-        '',
-        'A GitHub Action rebuilds it every week from the public Apify Store API, so new actors appear and '
-        'dead ones drop off automatically.',
-        '',
-        '### Can I add my actor?',
-        '',
-        f'Publish it in the Apify Store under the {c["storeCategoryLabel"]} category. Once people start '
-        'running it, it enters the list on the next weekly build. No pull request needed.',
-        '',
-        '## Need a custom scraper?',
-        '',
-        f'If no actor here fits your source, [{c["brand"]}]({site}) builds and maintains custom Apify scrapers. '
-        f'Email {CONTACT_EMAIL} with the site and the fields you need.',
-        '',
-        '---',
-        '',
-        f'If this list saved you time, a star helps other people find it. Links to Apify carry a referral code '
-        'that supports the upkeep of this list at no extra cost to you.',
-        '',
+        f'### {UI["faqUpdatedQ"]}', '', UI['faqUpdatedA'], '',
+        f'### {UI["faqAddQ"]}', '', UI['faqAddA'].format(category=c['storeCategoryLabel']), '',
+        f'## {UI["customTitle"]}', '',
+        UI['customText'].format(brand=c['brand'], site=site, email=CONTACT_EMAIL), '',
+        '---', '',
+        UI['footer'], '',
     ]
     files['README.md'] = '\n'.join(out)
 
     for g in groups:
         page = [
-            f'# {g["title"]}: {len(g["actors"])} Apify actors',
+            f'# {UI["groupPageTitle"].format(title=g["title"], n=len(g["actors"]))}',
             '',
             g['blurb'],
             '',
-            f'Part of [{c["title"]}](../README.md). Sorted by monthly users. Updated {today}.',
+            UI['groupPageIntro'].format(catalog=c['title'], today=today),
             '',
             *table(g['actors'], rank=True),
             '',
-            f'[Create a free Apify account](https://apify.com/?{REFERRAL}) to run any of these.',
+            UI['groupPageCta'].format(signup=signup),
             '',
         ]
         files[f'groups/{g["slug"]}.md'] = '\n'.join(page)
 
-    llms = [
-        f'# {c["title"]}',
-        '',
-        f'> {c["tagline"]}',
-        '',
-        f'Updated {today}. Monthly users = distinct users in the last 30 days. Links include a referral code.',
-        '',
-    ]
+    llms = [f'# {c["title"]}', '', f'> {c["tagline"]}', '', UI['llmsIntro'].format(today=today), '']
     for g in groups:
         llms += [f'## {g["title"]}', '']
         for a in g['actors']:
-            llms.append(f'- [{a["title"]}]({a["url"]}): {short(a["description"], 220)} '
-                        f'({number(a["monthlyUsers"])} monthly users)')
+            users = UI['llmsUsers'].format(n=number(a['monthlyUsers']))
+            llms.append(f'- [{a["title"]}]({a["url"]}): {short(a["description"], 220)} ({users})')
         llms.append('')
     files['llms.txt'] = '\n'.join(llms)
     return files
@@ -323,6 +358,7 @@ def render(actors, groups, featured, store_total, today) -> dict[str, str]:
 def main() -> None:
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
     raw, store_total = category_actors()
+    raw += regional_actors()
     seen, actors = set(), []
     for r in raw:
         a = shape(r)
@@ -373,7 +409,7 @@ def main() -> None:
     # A quiet week should not produce a commit just because the date moved.
     readme = ROOT / 'README.md'
     if readme.exists():
-        strip = lambda t: re.sub(r'Updated \d{4}-\d{2}-\d{2}|"updated": "[\d-]+"', '', t)
+        strip = lambda t: re.sub(r'\d{4}-\d{2}-\d{2}', '', t)
         old_json = previous.read_text(encoding='utf-8') if previous.exists() else ''
         if strip(readme.read_text(encoding='utf-8')) == strip(files['README.md']) and \
                 strip(old_json) == strip(files['data/actors.json']):
