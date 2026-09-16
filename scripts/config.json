@@ -1,0 +1,195 @@
+{
+ "repo": "lead-generation-scraping-apis",
+ "title": "Lead Generation Scraping APIs",
+ "tagline": "The most used lead generation scrapers on Apify, ranked by real monthly users: Google Maps businesses, emails and phone numbers, LinkedIn and B2B company data, business directories and contact enrichment. No code, export to CSV, Excel or your CRM.",
+ "brand": "AutomationByExperts",
+ "storeCategory": "LEAD_GENERATION",
+ "storeCategoryLabel": "Lead generation",
+ "fetchLimit": 1500,
+ "topCount": 25,
+ "intro": "A curated, weekly updated list of the {count} lead generation actors that people actually use, picked from the {storeTotal} actors in the Apify Store Lead Generation category. Actors nobody ran in the last 30 days are left out, and each one is filed under the lead source it covers, so you can find a working tool for local businesses, B2B contacts, email finding or enrichment in seconds instead of testing dozens.",
+ "exampleActor": "compass/crawler-google-places",
+ "exampleInput": {
+  "searchStringsArray": [
+   "dentist"
+  ],
+  "locationQuery": "Austin, Texas",
+  "maxCrawledPlacesPerSearch": 50
+ },
+ "groups": [
+  {
+   "slug": "google-maps",
+   "title": "Google Maps and Local Businesses",
+   "blurb": "Business names, addresses, phone numbers, websites, ratings and reviews from Google Maps and Google Business Profiles. The fastest way to build a local lead list.",
+   "keywords": [
+    "google maps",
+    "google places",
+    "gmaps",
+    "google business",
+    "maps scraper",
+    "google my business",
+    "places scraper"
+   ]
+  },
+  {
+   "slug": "email-finders",
+   "title": "Email and Contact Finders",
+   "blurb": "Find email addresses, phone numbers and social profiles from websites, domains or names.",
+   "keywords": [
+    "email",
+    "e-mail",
+    "contact detail",
+    "contact info",
+    "phone number",
+    "contacts scraper",
+    "mail finder"
+   ]
+  },
+  {
+   "slug": "linkedin",
+   "title": "LinkedIn and B2B Profiles",
+   "blurb": "People and company profiles, job titles, employees and Sales Navigator style searches from LinkedIn.",
+   "keywords": [
+    "linkedin",
+    "sales navigator"
+   ]
+  },
+  {
+   "slug": "b2b-databases",
+   "title": "B2B Company Databases",
+   "blurb": "Firmographics, decision makers and company lists from Apollo, Crunchbase, ZoomInfo and similar B2B sources.",
+   "keywords": [
+    "apollo",
+    "crunchbase",
+    "zoominfo",
+    "lusha",
+    "rocketreach",
+    "seamless",
+    "company data",
+    "companies house",
+    "company register",
+    "firmographic",
+    "b2b",
+    "leads database",
+    "people data",
+    "decision maker"
+   ]
+  },
+  {
+   "slug": "directories",
+   "title": "Business Directories and Reviews",
+   "blurb": "Yellow Pages, Yelp, Trustpilot, Clutch and other directories where businesses list their contact details.",
+   "keywords": [
+    "yellow pages",
+    "yellowpages",
+    "yelp",
+    "trustpilot",
+    "clutch",
+    "bbb",
+    "tripadvisor",
+    "directory",
+    "g2",
+    "capterra",
+    "angi",
+    "thumbtack",
+    "houzz",
+    "justdial",
+    "pages jaunes",
+    "gelbe seiten",
+    "yell"
+   ]
+  },
+  {
+   "slug": "social-leads",
+   "title": "Leads from Social Media",
+   "blurb": "Contact details and audience data from Instagram, Facebook, TikTok, X, YouTube and Reddit profiles.",
+   "keywords": [
+    "instagram",
+    "facebook",
+    "tiktok",
+    "twitter",
+    "youtube",
+    "reddit",
+    "threads",
+    "pinterest",
+    "telegram",
+    "whatsapp",
+    "discord",
+    "influencer"
+   ]
+  },
+  {
+   "slug": "enrichment-verification",
+   "title": "Enrichment and Verification",
+   "blurb": "Validate emails and phones, enrich a domain or a person with extra fields, and clean a lead list before outreach.",
+   "keywords": [
+    "email verif",
+    "verifier",
+    "validator",
+    "email validat",
+    "phone validat",
+    "enrichment",
+    "enrich",
+    "whois",
+    "tech stack",
+    "builtwith",
+    "wappalyzer",
+    "similarweb",
+    "skip trac",
+    "reverse phone",
+    "reverse email",
+    "people search",
+    "osint"
+   ]
+  },
+  {
+   "slug": "jobs-hiring-signals",
+   "title": "Hiring Signals and Job Boards",
+   "blurb": "Companies that are hiring right now, a strong buying signal for recruiters and B2B sales.",
+   "keywords": [
+    "job",
+    "indeed",
+    "glassdoor",
+    "hiring",
+    "career",
+    "recruit"
+   ]
+  }
+ ],
+ "fallbackGroup": {
+  "slug": "other-lead-sources",
+  "title": "Other Lead Sources",
+  "blurb": "Events, marketplaces, real estate agents, public records and every other niche lead source.",
+  "keywords": []
+ },
+ "featured": [
+  "canada411-ca",
+  "github-developer-leads",
+  "reddit-lead-finder",
+  "podcast-guest-finder",
+  "journalist-request-finder",
+  "luma-events-scraper",
+  "geo-grid-local-rank-tracker",
+  "dealer-inventory-scraper",
+  "email-deliverability-auditor",
+  "thebluebook-scraper"
+ ],
+ "faq": [
+  [
+   "What is the best Google Maps scraper for leads?",
+   "The most used one is at the top of the Google Maps group above. Pick by monthly users first, then check that it returns the fields you need (emails and social links are often an add-on step)."
+  ],
+  [
+   "Is scraping business contact data legal?",
+   "Collecting publicly listed business information is generally allowed, but personal data rules such as GDPR and CCPA still apply to how you store and use it. Check the terms of the source site and your local law before running outreach."
+  ],
+  [
+   "Can I send the leads straight to my CRM?",
+   "Yes. Apify integrates with HubSpot, Google Sheets, Zapier, Make and n8n, and every run can trigger a webhook when it finishes."
+  ],
+  [
+   "Do I need proxies or my own servers?",
+   "No. The actors run in the Apify cloud and handle proxies and browsers for you."
+  ]
+ ]
+}
