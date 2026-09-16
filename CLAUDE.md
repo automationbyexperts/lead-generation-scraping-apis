@@ -35,7 +35,7 @@ bug in one and copy the file to the others.
 
 ## Translations
 
-Four translated siblings live next to this folder (Spanish, Brazilian Portuguese, French, Greek), each
+Six translated siblings live next to this folder (Spanish, Brazilian Portuguese, French, Greek, German, Italian), each
 with its own `CLAUDE.md`. `build.py` reads every visible sentence from `UI_EN`, overridable by a
 config `ui` block, plus optional `languages` (the language bar), `thousandsSeparator` and
-`extraSearches` (regional Store searches). Keep `build.py` identical across all ten catalog repos.
+`extraSearches` (regional Store searches). Keep `build.py` identical across all fourteen catalog repos.
