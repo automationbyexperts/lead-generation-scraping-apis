@@ -191,5 +191,27 @@
    "Do I need proxies or my own servers?",
    "No. The actors run in the Apify cloud and handle proxies and browsers for you."
   ]
+ ],
+ "languages": [
+  {
+   "label": "English",
+   "repo": "lead-generation-scraping-apis"
+  },
+  {
+   "label": "Español",
+   "repo": "apis-scraping-generacion-de-leads"
+  },
+  {
+   "label": "Português",
+   "repo": "apis-scraping-geracao-de-leads"
+  },
+  {
+   "label": "Français",
+   "repo": "apis-scraping-generation-de-leads"
+  },
+  {
+   "label": "Ελληνικά",
+   "repo": "apis-scraping-leads-greece"
+  }
  ]
 }

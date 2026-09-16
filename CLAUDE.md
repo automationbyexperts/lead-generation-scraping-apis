@@ -32,3 +32,10 @@ bug in one and copy the file to the others.
 ## Weekly refresh
 
 `.github/workflows/refresh.yml` runs `build.py` every Monday 06:17 UTC and commits on change.
+
+## Translations
+
+Four translated siblings live next to this folder (Spanish, Brazilian Portuguese, French, Greek), each
+with its own `CLAUDE.md`. `build.py` reads every visible sentence from `UI_EN`, overridable by a
+config `ui` block, plus optional `languages` (the language bar), `thousandsSeparator` and
+`extraSearches` (regional Store searches). Keep `build.py` identical across all ten catalog repos.
