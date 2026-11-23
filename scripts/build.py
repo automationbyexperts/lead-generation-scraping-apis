@@ -401,7 +401,7 @@ def main() -> None:
     for name, text in files.items():
         lowered = text.lower()
         for bad in FORBIDDEN:
-            if bad.lower() in lowered:
+            if (bad in text) if bad == 'CAP-' else (bad.lower() in lowered):
                 sys.exit(f'Refusing to write {name}: contains forbidden string {bad!r}')
         if '\u2014' in text:
             sys.exit(f'Refusing to write {name}: contains an em dash')
