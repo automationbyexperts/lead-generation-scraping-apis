@@ -39,3 +39,7 @@ Six translated siblings live next to this folder (Spanish, Brazilian Portuguese,
 with its own `CLAUDE.md`. `build.py` reads every visible sentence from `UI_EN`, overridable by a
 config `ui` block, plus optional `languages` (the language bar), `thousandsSeparator` and
 `extraSearches` (regional Store searches). Keep `build.py` identical across all fourteen catalog repos.
+
+The `FORBIDDEN` credential guard in `scripts/build.py` matches `CAP-` case-sensitively (fixed 2026-11-23).
+It used to ignore case, so a third-party slug like `flat-cap-contact-scraper` tripped it and failed the
+weekly "Refresh catalog" run in all 14 catalogs. Keep the other strings case-insensitive.
