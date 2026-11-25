@@ -157,6 +157,7 @@ Firmographics, decision makers and company lists from Apollo, Crunchbase, ZoomIn
 | [Crunchbase Scraper: 6M+ Companies, Funding & Investors](https://apify.com/davidsharadbhatt/crunchbase-scraper-6m-companies-funding-investors?fpr=youssef) <br><sub>by David Bhatt</sub> | Search 6M+ Crunchbase companies by location, industry, keywords and funding date. Get funding rounds, investors, founders, emails and phones in one... | 36 | 4.8 (14) |
 | [B2B Sales Triggers - Hiring Surge, Funding, Press, Exec Changes](https://apify.com/seibs.co/b2b-sales-triggers?fpr=youssef) <br><sub>by Seibs.co</sub> | B2B intent data aggregator. For a list of target companies, computes: hiring surge (LinkedIn delta), funding rounds, press mentions, executive... | 32 | - |
 | [Bulk Lead Scraper + DB Like Apollo](https://apify.com/pipelinelabs/leads-scraper-upto-300k-leads-per-month-like-apollo?fpr=youssef) <br><sub>by Pipeline Labs</sub> | Find Bulk Leads With Emails, LinkedIn URL, Phone Numbers, & More! Similar to Apollo, ZoomInfo, Lusha. 250+ Million Verified Database! | 30 | 2.7 (2) |
+| [Company Social Profile Finder](https://apify.com/publicrecords/company-social-profile-finder) <br><sub>by Public Records</sub> | Company domain or name to its LinkedIn, X, YouTube, Instagram and Facebook links, with confidence scores. | - | - |
 
 [See all 55 B2B Company Databases actors](groups/b2b-databases.md)
 
@@ -253,6 +254,10 @@ Companies that are hiring right now, a strong buying signal for recruiters and B
 | [Bayt Job Scraper - MENA Jobs with Salary & Skills](https://apify.com/blackfalcondata/bayt-scraper?fpr=youssef) <br><sub>by Black Falcon Data</sub> | Scrape bayt.com - the leading Middle East job board across UAE · Saudi Arabia · Qatar · Egypt & 9 more countries · 60+ structured fields · native &... | 274 | 5 (1) |
 | [Glassdoor Reviews, Jobs & Contacts · No 200-Cap · AI Intel](https://apify.com/memo23/glassdoor-scraper-ppr?fpr=youssef) <br><sub>by Muhamed Didovic</sub> | Glassdoor scraper with no 200-review cap: full reviews with sub-ratings, pros/cons and employer replies, plus jobs, salaries and interviews. Add... | 261 | 4.6 (11) |
 | [All Jobs Scraper: Naukri, Glassdoor, StepStone](https://apify.com/agentx/all-jobs-scraper?fpr=youssef) <br><sub>by AgentX</sub> | Job scraper for 42 job boards in 98 countries: foundit, Bayt, ZipRecruiter, Reed, InfoJobs, Arbeitsagentur, Jobstreet, Totaljobs, jobs.ch... | 221 | 4.2 (12) |
+| [Ashby Jobs Scraper](https://apify.com/publicrecords/ashby-jobs-scraper) <br><sub>by Public Records</sub> | New job postings from any Ashby job board since a date or window (24h, 7d, 30d). | - | - |
+| [Greenhouse Jobs Scraper](https://apify.com/publicrecords/greenhouse-jobs-scraper) <br><sub>by Public Records</sub> | New job postings from any Greenhouse job board since a date or window. | - | - |
+| [Lever Jobs Scraper](https://apify.com/publicrecords/lever-jobs-scraper) <br><sub>by Public Records</sub> | New job postings from any Lever job board since a date or window. | - | - |
+| [SmartRecruiters Jobs Scraper](https://apify.com/publicrecords/smartrecruiters-jobs-scraper) <br><sub>by Public Records</sub> | New job postings from any SmartRecruiters careers site since a date or window. | - | - |
 
 [See all 118 Hiring Signals and Job Boards actors](groups/jobs-hiring-signals.md)
 
